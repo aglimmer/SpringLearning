@@ -3,58 +3,92 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Insert title here</title>
+		<style>
+			/* 奇偶选择器 */
+				table.contab tr:nth-of-type(odd){background-color: #c3dde0;} 
+				table.contab tr:nth-of-type(even){background-color: #d4e3e5;}
+				table.contab {
+					font-family: verdana,arial,sans-serif;
+					font-size:11px;
+					color:#333333;
+					border-width: 1px;
+					border-color: #a9c6c9;
+					border-collapse: collapse;
+				}
+				table.contab th {
+					border-width: 1px;
+					padding: 5px;
+					border-style: solid;
+					border-color: #a9c6c9;
+				}
+				table.contab td {
+					border-width: 1px;
+					padding: 4px;
+					border-style: solid;
+					border-color: #a9c6c9;
+				}
+		</style>
 		<script>
 			function query() {
-				// var url = "http://localhost:8080/SpringMybatis/queryinfo.do";
-				// http://localhost:8080/SpringMybatis/
-				var url = "http://127.0.0.1:8080/SpringMybatis/querytemp.do";
-				var req = null;
-				if (window.XMLHttpRequest) {
-					req = new XMLHttpRequest();
-				} else if (window.ActiveXObject) {
-					try {
-						req = new ActiveXObject("Msxml2.XMLHTTP");
-					} catch (e) {
-						try {
-							req = new ActiveXObject("Microsoft.XMLHTTP");
-						} catch (e) {}
-					}
-				} else {
-					alert("无法创建ajax对象");
-					return;
-				}
+				var url = "http://localhost:8080/SpringMybatis/queryinfo.do";
+				var req = new XMLHttpRequest();
 				req.open("POST", url, true);
 				req.withCredentials = true;
-				// req.setRequestHeader("Content-Type", "application/json");
-				req.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=UTF-8");
-				req.onerror = function(e) {
-					alert("请求错误:" + e);
+				req.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+				req.onerror = function() {
+					alert("请求错误");
 				};
 				req.onreadystatechange = function() {
 					if (req.readyState == 4 && req.status == 200) {
-						document.getElementById("content").innerHTML = req.responseText;
+							callBack(req.responseText);
 					}
-				}
-				var obj = {};
-				obj.height=150;
-				obj.sex = "男";
-				req.send(JSON.stringify(obj));
-				// req.send("sex=男&height=150");
-
+				};
+				var params = document.getElementsByName("param");
+				var ps = "sex="+params[0].value+"&height="+params[1].value;
+				req.send(ps);
 			}
-			function toUrlParam(){
-				var obj = {};
-				obj.height=150;
-				obj.sex = "男";
-				alert(JSON.stringify(obj));
+			function callBack(param){
+					var arr = JSON.parse(param);
+					var res = "";
+					if(arr.length==0){
+						document.getElementById("content").innerHTML ="查询结果为空";
+						return;
+					}
+					res = "<table class=\"contab\" style=\"width:600px;\">";
+					res +="<tr>";
+					var heads = [];
+					for(var k in arr[0]){
+						heads.push(k);
+						res+="<th>"+k+"</th>";
+					}
+					res +="</tr>";
+					for(var i=0;i<arr.length;i++){
+						var item = arr[i];
+						res +="<tr>";
+						for(var j=0;j<heads.length;j++){
+							res+="<td>"+item[heads[j]]+"</td>";
+						}
+						res +="</tr>";
+					}
+					res +="</table>";
+					document.getElementById("content").innerHTML = res;
+			}
+			window.onload=function(){
+				query();
 			}
 		</script>
 	</head>
 	<body>
-		<pre>
-<input type="button" onclick="query()" value="查询数据" >
-<input type="button" onclick="toUrlParam()" value="测试" >
-</pre>
+		
+		<h2>查询选项</h2>
+		<p>
+		性别：<select name="param">
+			<option value="女" selected="selected">女</option>
+			<option value="男">男</option>
+			</select>
+		最低身高：<input type="number" name="param" value="150">
+		<input type="button" onclick="query()" value="查询">
+		</p>
 		<h2>显示数据</h2>
 		<div id="content"></div>
 	</body>
