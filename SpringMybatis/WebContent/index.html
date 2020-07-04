@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+		<script>
+			function query() {
+				// var url = "http://localhost:8080/SpringMybatis/queryinfo.do";
+				// http://localhost:8080/SpringMybatis/
+				var url = "http://127.0.0.1:8080/SpringMybatis/querytemp.do";
+				var req = null;
+				if (window.XMLHttpRequest) {
+					req = new XMLHttpRequest();
+				} else if (window.ActiveXObject) {
+					try {
+						req = new ActiveXObject("Msxml2.XMLHTTP");
+					} catch (e) {
+						try {
+							req = new ActiveXObject("Microsoft.XMLHTTP");
+						} catch (e) {}
+					}
+				} else {
+					alert("无法创建ajax对象");
+					return;
+				}
+				req.open("POST", url, true);
+				req.withCredentials = true;
+				// req.setRequestHeader("Content-Type", "application/json");
+				req.setRequestHeader("Content-type","application/x-www-form-urlencoded;charset=UTF-8");
+				req.onerror = function(e) {
+					alert("请求错误:" + e);
+				};
+				req.onreadystatechange = function() {
+					if (req.readyState == 4 && req.status == 200) {
+						document.getElementById("content").innerHTML = req.responseText;
+					}
+				}
+				var obj = {};
+				obj.height=150;
+				obj.sex = "男";
+				req.send(JSON.stringify(obj));
+				// req.send("sex=男&height=150");
+
+			}
+			function toUrlParam(){
+				var obj = {};
+				obj.height=150;
+				obj.sex = "男";
+				alert(JSON.stringify(obj));
+			}
+		</script>
+	</head>
+	<body>
+		<pre>
+<input type="button" onclick="query()" value="查询数据" >
+<input type="button" onclick="toUrlParam()" value="测试" >
+</pre>
+		<h2>显示数据</h2>
+		<div id="content"></div>
+	</body>
+</html>
