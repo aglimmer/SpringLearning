@@ -1,6 +1,7 @@
 package com.cont;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,10 @@ public class ControllerTest {
 	public ControllerTest() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	public static void main(String[] args) {
+		System.out.println("args = " + Arrays.deepToString(args));
+	}
 	
 	/**
 	 * @param mp
